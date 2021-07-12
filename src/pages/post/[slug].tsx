@@ -1,5 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 
+import Head from 'next/head';
 import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
@@ -26,9 +27,23 @@ interface PostProps {
   post: Post;
 }
 
-// export default function Post() {
-//   // TODO
-// }
+export default function Post() {
+  return (
+    <>
+      <Head>
+        <title>Posts | spacetraveling</title>
+      </Head>
+
+      <main className={styles.container}>
+        <div className={styles.posts}>
+          <time>123124242</time>
+          <strong>r3fe3x3434</strong>
+          <p>regerge </p>
+        </div>
+      </main>
+    </>
+  );
+}
 
 // export const getStaticPaths = async () => {
 //   const prismic = getPrismicClient();
