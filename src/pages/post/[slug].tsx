@@ -38,7 +38,7 @@ export default function Post({ post }: PostProps): JSX.Element {
       <main className={styles.container}>
         <div className={styles.posts}>
           <time>{post.first_publication_date}</time>
-          <strong>r3fe3x3434</strong>
+          <strong>{post.data.title}</strong>
           <p>regerge </p>
         </div>
       </main>
@@ -49,7 +49,7 @@ export default function Post({ post }: PostProps): JSX.Element {
 export const getStaticPaths: GetStaticPaths = async () => {
   const prismic = getPrismicClient();
   const posts = await prismic.query([
-    Prismic.Predicates.at('document.type', 'posts'),
+    Prismic.Predicates.at('document.type', 'post'),
   ]);
 
   const paths = posts.results.map(post => {
@@ -74,7 +74,7 @@ export const getStaticProps: GetStaticProps = async context => {
 
   const prismic = getPrismicClient();
   const { slug } = context.params;
-  const response = await prismic.getByUID('posts', String(slug), {
+  const response = await prismic.getByUID('post', String(slug), {
     ref: null,
   });
 
