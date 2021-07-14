@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { useState } from 'react';
 
+import { useEffect } from 'react';
 import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
@@ -32,24 +33,8 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-const formattedPost = (posts: Post[]): Post[] => {
-  return posts.map(post => {
-    return {
-      uid: post.uid,
-      first_publication_date: format(
-        new Date(post.first_publication_date),
-        'dd MMM yyyy',
-        {
-          locale: ptBR,
-        }
-      ),
-      data: {
-        title: post.data.title,
-        subtitle: post.data.subtitle,
-        author: post.data.author,
-      },
-    };
-  });
+const formattedDate = (date: string): string => {
+  return format(new Date(date), 'dd MMM yyyy', { locale: ptBR });
 };
 
 export default function Home({ postsPagination }: HomeProps): JSX.Element {
@@ -68,7 +53,12 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
     setNextPage(postsResults.next_page);
     setCurrentPage(postsResults.page);
 
-    const newPosts = formattedPost(postsResults.results);
+    const newPosts = postsResults.results.map(post => {
+      return {
+        ...post,
+        first_publication_date: formattedDate(post.first_publication_date),
+      };
+    });
 
     setPosts([...posts, ...newPosts]);
   }
@@ -79,7 +69,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
         <title>Posts | spacetraveling</title>
       </Head>
 
-      <main className={commonStyles.contentContainer}>
+      <main className={commonStyles.container}>
         <div className={styles.post}>
           {posts.map(post => (
             <Link href={`/post/${post.uid}`} key={post.uid}>
@@ -88,7 +78,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
                 <p>{post.data.subtitle}</p>
                 <div className={styles.info}>
                   <span>
-                    <FiCalendar /> {post.first_publication_date}
+                    <FiCalendar /> {formattedDate(post.first_publication_date)}
                   </span>
                   <span>
                     <FiUser /> {post.data.author}
@@ -136,7 +126,7 @@ export const getStaticProps: GetStaticProps = async () => {
   });
 
   const postsPagination = {
-    results: formattedPost(posts),
+    results: posts,
     next_page: postsResponse.next_page,
   };
 
