@@ -4,10 +4,8 @@
 import { useEffect } from 'react';
 
 // username/repo format
-const REPO_NAME =
-  process.env.REPO_COMMENTS || 'leocairos/ignite-challenge-blog';
-const LABEL =
-  `${process.env.REPO_COMMENTS_LABEL}` || 'comment :speech_balloon:';
+const REPO_NAME = 'leocairos/ignite-challenge-blog';
+const LABEL = 'comment :speech_balloon:';
 
 const useUtterances = (commentNodeId: string) => {
   useEffect(() => {

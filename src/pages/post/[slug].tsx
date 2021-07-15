@@ -8,7 +8,6 @@ import { FiCalendar, FiClock, FiUser } from 'react-icons/fi';
 import { ptBR } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import Prismic from '@prismicio/client';
-import Link from 'next/link';
 
 import { getPrismicClient } from '../../services/prismic';
 
@@ -17,6 +16,7 @@ import styles from './post.module.scss';
 import Comments from '../../components/Comments';
 
 interface Post {
+  uuid: string;
   first_publication_date: string | null;
   last_publication_date: string | null;
   data: {
@@ -97,7 +97,7 @@ export default function Post({ post }: PostProps): JSX.Element {
             );
           })}
         </div>
-        <Comments commentNodeId={post.data.title} />
+        <Comments commentNodeId={`${post.uuid}`} />
       </main>
     </>
   );
