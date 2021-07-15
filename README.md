@@ -29,16 +29,26 @@ Nesse desafio, você deverá criar uma aplicação para treinar o que 
 
 Essa será uma aplicação onde o seu principal objetivo é criar um blog do zero. Você vai receber uma aplicação praticamente em branco que deve consumir os dados do Prismic e ter a interface implementada conforme o layout do Figma. Você terá acesso a diversos arquivos para implementar:
 
-- Estilizações global, comun e individuais;
-- Importação de fontes Google;
-- Paginação de posts;
-- Cálculo de tempo estimado de leitura do post;
-- Geração de páginas estáticas com os métodos `getStaticProps` e `getStaticPaths`;
-- Formatação de datas com `date-fns`;
-- Uso de ícones com `react-icons`;
-- Requisições HTTP com `fetch`;
+- [X] Estilizações global, comun e individuais;
+- [X] Importação de fontes Google;
+- [X] Paginação de posts;
+- [X] Cálculo de tempo estimado de leitura do post;
+- [X] Geração de páginas estáticas com os métodos `getStaticProps` e `getStaticPaths`;
+- [X] Formatação de datas com `date-fns`;
+- [X] Uso de ícones com `react-icons`;
+- [X] Requisições HTTP com `fetch`;
 - Entre outros.
 
+# 💻 Desafio 02 - Adicionando features ao blog
+
+Essa será uma aplicação onde o seu principal objetivo é adicionar features a um projeto já existente. Utilizaremos como base a solução desenvolvida por você do desafio obrigatório:
+
+Você deve implementar no projeto as seguintes features:
+
+- [X] Comentários com Utteranc;
+- [ ] Preview do documento Prismic;
+- [ ] Navegação entre post anterior e próximo;
+- [ ] Informação de edição do post.
 
 ## 📝 Licença
 
