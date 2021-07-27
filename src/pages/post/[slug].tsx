@@ -130,7 +130,7 @@ export default function Post({
           })}
         </div>
 
-        <section className={`${styles.navigation} ${commonStyles.container}`}>
+        <section className={`${styles.navigation}`}>
           {navigation?.prevPost.length > 0 && (
             <div>
               <h3>{navigation.prevPost[0].data.title}</h3>
