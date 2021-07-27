@@ -46,9 +46,9 @@ Essa será uma aplicação onde o seu principal objetivo é adicionar feature
 Você deve implementar no projeto as seguintes features:
 
 - [X] Comentários com Utteranc;
-- [ ] Preview do documento Prismic;
-- [ ] Navegação entre post anterior e próximo;
-- [ ] Informação de edição do post.
+- [X] Preview do documento Prismic;
+- [X] Navegação entre post anterior e próximo;
+- [X] Informação de edição do post.
 
 ## 📝 Licença
 

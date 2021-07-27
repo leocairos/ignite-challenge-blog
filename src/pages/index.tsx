@@ -31,13 +31,17 @@ interface PostPagination {
 
 interface HomeProps {
   postsPagination: PostPagination;
+  preview: boolean;
 }
 
 const formattedDate = (date: string): string => {
   return format(new Date(date), 'dd MMM yyyy', { locale: ptBR });
 };
 
-export default function Home({ postsPagination }: HomeProps): JSX.Element {
+export default function Home({
+  postsPagination,
+  preview,
+}: HomeProps): JSX.Element {
   const [posts, setPosts] = useState<Post[]>(postsPagination.results);
   const [nextPage, setNextPage] = useState<string>(postsPagination.next_page);
   const [currentPage, setCurrentPage] = useState(1);
@@ -87,29 +91,36 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
               </a>
             </Link>
           ))}
+          {nextPage && (
+            <button
+              type="button"
+              onClick={loadMorePosts}
+              className={styles.loadMorePosts}
+            >
+              Carregar mais posts
+            </button>
+          )}
         </div>
-        {nextPage && (
-          <button
-            type="button"
-            onClick={loadMorePosts}
-            className={styles.loadMorePosts}
-          >
-            Carregar mais posts
-          </button>
+
+        {preview && (
+          <aside>
+            <Link href="/api/exit-preview">
+              <a className={commonStyles.preview}>Sair do modo Preview</a>
+            </Link>
+          </aside>
         )}
       </main>
     </>
   );
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async ({ preview = false }) => {
   const prismic = getPrismicClient();
   const postsResponse = await prismic.query(
     [Prismic.predicates.at('document.type', 'post')],
     {
       fetch: ['post.title', 'post.subtitle', 'post.author'],
       pageSize: 2,
-      lang: 'pt-BR',
     }
   );
 
@@ -133,7 +144,8 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       postsPagination,
+      preview,
     },
-    revalidate: 1800,
+    // revalidate: 1800,
   };
 };

@@ -8,6 +8,7 @@ import { FiCalendar, FiClock, FiUser } from 'react-icons/fi';
 import { ptBR } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import Prismic from '@prismicio/client';
+import Link from 'next/link';
 
 import { getPrismicClient } from '../../services/prismic';
 
@@ -36,9 +37,28 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  navigation: {
+    prevPost: {
+      uid: string;
+      data: {
+        title: string;
+      };
+    }[];
+    nextPost: {
+      uid: string;
+      data: {
+        title: string;
+      };
+    }[];
+  };
+  preview: boolean;
 }
 
-export default function Post({ post }: PostProps): JSX.Element {
+export default function Post({
+  post,
+  navigation,
+  preview,
+}: PostProps): JSX.Element {
   const router = useRouter();
   if (router.isFallback) {
     return <h1>Carregando...</h1>;
@@ -52,13 +72,24 @@ export default function Post({ post }: PostProps): JSX.Element {
   }, 0);
   const readTime = Math.ceil(totalWords / 200);
 
-  const formatedDate = format(
+  const formattedDate = format(
     new Date(post.first_publication_date),
     'dd MMM yyyy',
     {
       locale: ptBR,
     }
   );
+
+  const editionDate =
+    post.first_publication_date !== post.last_publication_date
+      ? format(
+          new Date(post.last_publication_date),
+          "'* editado em' dd MMM yyyy', às' H':'m",
+          {
+            locale: ptBR,
+          }
+        )
+      : null;
 
   return (
     <>
@@ -70,7 +101,7 @@ export default function Post({ post }: PostProps): JSX.Element {
             <ul>
               <li>
                 <FiCalendar />
-                {formatedDate}
+                {formattedDate}
               </li>
               <li>
                 <FiUser />
@@ -81,6 +112,7 @@ export default function Post({ post }: PostProps): JSX.Element {
                 {`${readTime} min`}
               </li>
             </ul>
+            <span>{editionDate && editionDate}</span>
           </div>
 
           {post.data.content.map(content => {
@@ -97,7 +129,36 @@ export default function Post({ post }: PostProps): JSX.Element {
             );
           })}
         </div>
+
+        <section className={`${styles.navigation} ${commonStyles.container}`}>
+          {navigation?.prevPost.length > 0 && (
+            <div>
+              <h3>{navigation.prevPost[0].data.title}</h3>
+              <Link href={`/post/${navigation.prevPost[0].uid}`}>
+                <a>Post anterior</a>
+              </Link>
+            </div>
+          )}
+
+          {navigation?.nextPost.length > 0 && (
+            <div>
+              <h3>{navigation.nextPost[0].data.title}</h3>
+              <Link href={`/post/${navigation.nextPost[0].uid}`}>
+                <a>Próximo post</a>
+              </Link>
+            </div>
+          )}
+        </section>
+
         <Comments commentNodeId={`${post.uuid}`} />
+
+        {preview && (
+          <aside>
+            <Link href="/api/exit-preview">
+              <a className={commonStyles.preview}>Sair do modo Preview</a>
+            </Link>
+          </aside>
+        )}
       </main>
     </>
   );
@@ -123,10 +184,34 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({
+  params,
+  preview = false,
+  previewData,
+}) => {
   const prismic = getPrismicClient();
   const { slug } = params;
-  const response = await prismic.getByUID('post', String(slug), {});
+  const response = await prismic.getByUID('post', String(slug), {
+    ref: previewData?.ref || null,
+  });
+
+  const prevPost = await prismic.query(
+    [Prismic.Predicates.at('document.type', 'post')],
+    {
+      pageSize: 1,
+      after: response.id,
+      orderings: '[document.first_publication_date]',
+    }
+  );
+
+  const nextPost = await prismic.query(
+    [Prismic.Predicates.at('document.type', 'post')],
+    {
+      pageSize: 1,
+      after: response.id,
+      orderings: '[document.last_publication_date desc]',
+    }
+  );
 
   const post = {
     uid: response.uid,
@@ -151,6 +236,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       post,
+      navigation: {
+        prevPost: prevPost?.results,
+        nextPost: nextPost?.results,
+      },
+      preview,
     },
     revalidate: 1800,
   };
