@@ -114,7 +114,7 @@ export default function Home({
   );
 }
 
-export const getStaticProps: GetStaticProps = async ({ preview = false }) => {
+export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
   const postsResponse = await prismic.query(
     [Prismic.predicates.at('document.type', 'post')],
@@ -144,8 +144,8 @@ export const getStaticProps: GetStaticProps = async ({ preview = false }) => {
   return {
     props: {
       postsPagination,
-      preview,
+      preview: false,
     },
-    // revalidate: 1800,
+    revalidate: 1800,
   };
 };
